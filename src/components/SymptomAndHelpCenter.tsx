@@ -3,46 +3,38 @@ import {
   AlertTriangle,
   PhoneCall,
   Phone,
-  ShieldAlert,
-  Stethoscope,
-  Heart,
-  Baby,
-  Users,
+  CheckCircle2,
   MapPin,
   ExternalLink,
-  CheckCircle2,
-  AlertCircle,
-  FileText,
   Clock,
-  Sparkles,
-  Info,
+  Shield,
+  Activity,
+  UserCheck,
 } from 'lucide-react';
 import {
   SYMPTOM_TRIAGE_DATA,
   AGE_GROUP_GUIDELINES,
   HEALTHCARE_FACILITIES,
 } from '../data/hazeData';
-import { ClinicOrHospital } from '../types/haze';
 
 export const SymptomAndHelpCenter: React.FC = () => {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [selectedCohortIndex, setSelectedCohortIndex] = useState<number>(0);
   const [facilityFilter, setFacilityFilter] = useState<string>('All');
-  const [facilitySearch, setFacilitySearch] = useState<string>('');
 
   const symptomChecklist = [
-    { id: 'itchy-eyes', label: 'Itchy, stinging or watery eyes', severity: 'mild' },
-    { id: 'throat-tickle', label: 'Dry throat tickle or scratchy cough', severity: 'mild' },
-    { id: 'runny-nose', label: 'Clear runny nose or sneezing', severity: 'mild' },
-    { id: 'mild-headache', label: 'Mild headache or fatigue after walking outdoors', severity: 'mild' },
-    { id: 'persistent-cough', label: 'Persistent dry coughing fits', severity: 'moderate' },
-    { id: 'wheezing', label: 'Audible wheezing or whistling breath', severity: 'moderate' },
-    { id: 'chest-tightness', label: 'Mild chest tightness upon exertion', severity: 'moderate' },
-    { id: 'skin-rash', label: 'Skin irritation or eczema flare-up', severity: 'moderate' },
-    { id: 'acute-breathlessness', label: 'Severe shortness of breath at rest', severity: 'severe' },
-    { id: 'cannot-speak', label: 'Inability to complete full sentences without gasping', severity: 'severe' },
-    { id: 'chest-pain', label: 'Crushing chest pain or pressure', severity: 'severe' },
-    { id: 'blue-lips', label: 'Bluish or pale lips / fingernails', severity: 'severe' },
+    { id: 'itchy-eyes', label: 'Itchy, stinging or watery eyes', zone: 'Eyes / Face', severity: 'mild' },
+    { id: 'throat-tickle', label: 'Scratchy dry throat & tickle cough', zone: 'Throat', severity: 'mild' },
+    { id: 'runny-nose', label: 'Clear runny nose or sneezing', zone: 'Nasal', severity: 'mild' },
+    { id: 'mild-headache', label: 'Slight headache after walking in haze', zone: 'Head', severity: 'mild' },
+    { id: 'persistent-cough', label: 'Persistent dry coughing bouts', zone: 'Throat', severity: 'moderate' },
+    { id: 'wheezing', label: 'Audible wheezing or whistling breath', zone: 'Chest', severity: 'moderate' },
+    { id: 'chest-tightness', label: 'Chest tightness when walking', zone: 'Chest', severity: 'moderate' },
+    { id: 'skin-rash', label: 'Skin irritation or eczema flare-up', zone: 'Skin', severity: 'moderate' },
+    { id: 'acute-breathlessness', label: 'Severe shortness of breath at rest', zone: 'Emergency', severity: 'severe' },
+    { id: 'cannot-speak', label: 'Unable to speak in full sentences', zone: 'Emergency', severity: 'severe' },
+    { id: 'chest-pain', label: 'Crushing chest pressure or pain', zone: 'Emergency', severity: 'severe' },
+    { id: 'blue-lips', label: 'Bluish or pale lips / fingernails', zone: 'Emergency', severity: 'severe' },
   ];
 
   const toggleSymptom = (id: string) => {
@@ -67,112 +59,113 @@ export const SymptomAndHelpCenter: React.FC = () => {
   const activeTriage = getTriageLevel();
 
   const filteredFacilities = HEALTHCARE_FACILITIES.filter((f) => {
-    const matchesFilter =
-      facilityFilter === 'All' ||
-      (facilityFilter === 'Emergency' && f.type.includes('Emergency')) ||
-      (facilityFilter === 'Children' && f.type.includes('Children')) ||
-      (facilityFilter === '24h GP' && f.type.includes('GP')) ||
-      (facilityFilter === 'Telehealth' && f.type.includes('Telemedicine'));
-
-    const matchesSearch =
-      facilitySearch === '' ||
-      f.name.toLowerCase().includes(facilitySearch.toLowerCase()) ||
-      f.area.toLowerCase().includes(facilitySearch.toLowerCase()) ||
-      f.address.toLowerCase().includes(facilitySearch.toLowerCase());
-
-    return matchesFilter && matchesSearch;
+    if (facilityFilter === 'All') return true;
+    if (facilityFilter === 'Emergency') return f.type.includes('Emergency');
+    if (facilityFilter === 'Children') return f.type.includes('Children');
+    if (facilityFilter === '24h GP') return f.type.includes('GP');
+    if (facilityFilter === 'Telehealth') return f.type.includes('Telemedicine');
+    return true;
   });
 
   return (
     <div className="space-y-8">
-      {/* Top Emergency Action Header (Prominent 995 Helpline) */}
-      <section className="bg-rose-900 text-white rounded-2xl p-6 sm:p-8 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2 text-xs text-rose-200">
+      {/* Visual SCDF Emergency Header Banner */}
+      <section className="bg-rose-950 text-white rounded-3xl p-6 sm:p-10 shadow-lg relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-900/60 border border-rose-700/60 text-xs text-rose-200">
               <AlertTriangle className="w-4 h-4 text-rose-300" />
-              <span>Singapore Civil Defence Force (SCDF) Emergency Protocol</span>
+              <span>Singapore Emergency Medical Directive</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white">
+
+            <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
               Emergency Healthcare Assistance in Singapore
-            </h2>
-            <p className="text-xs sm:text-sm text-rose-100 leading-relaxed">
-              If you or a travel companion experiences acute breathlessness, chest pain, or an unresponsive asthma attack, do not wait. Emergency calls in Singapore are free from any international or local mobile SIM.
+            </h1>
+
+            <p className="text-xs sm:text-sm text-rose-200/90 leading-relaxed">
+              If experiencing acute breathlessness, chest pain, or an unresponsive asthma attack, do not wait. Dial SCDF emergency ambulance <strong>995</strong> (free from any local or roaming mobile).
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 shrink-0">
             <a
               href="tel:995"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-rose-900 font-bold text-sm hover:bg-rose-50 transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-white text-rose-950 font-black text-sm hover:bg-rose-50 transition-all shadow-md active:scale-98"
             >
-              <PhoneCall className="w-4 h-4 text-rose-600 animate-pulse" />
-              <span>Call 995 (Life Emergency)</span>
+              <PhoneCall className="w-5 h-5 text-rose-600" />
+              <span>Call 995 (Emergency)</span>
             </a>
             <a
               href="tel:1777"
-              className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-rose-800 text-white font-medium text-xs sm:text-sm hover:bg-rose-700 transition-colors border border-rose-700"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-rose-900/80 text-white font-bold text-xs sm:text-sm hover:bg-rose-900 transition-all border border-rose-700/80"
             >
-              <Phone className="w-3.5 h-3.5" />
+              <Phone className="w-4 h-4" />
               <span>Call 1777 (Non-Emergency)</span>
             </a>
           </div>
         </div>
       </section>
 
-      {/* Interactive Symptom Checker & Self-Triage Engine */}
-      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
-        <div className="max-w-3xl mb-6">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <span>Clinical Guidance</span>
-            <span aria-hidden="true">·</span>
-            <span>Symptom Checker & Triage Protocol</span>
-          </div>
-          <h2 className="text-xl font-bold text-slate-900">
+      {/* Interactive Symptom Checker Card */}
+      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm">
+        <div className="max-w-3xl mb-8">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">
+            Clinical Self-Triage
+          </span>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900">
             What are your possible symptoms?
           </h2>
-          <p className="text-xs text-slate-600 mt-1">
-            Select any symptoms you or your family members are experiencing to see recommended health actions and appropriate medical channels:
+          <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+            Tap the symptoms you or your family members are currently experiencing:
           </p>
         </div>
 
-        {/* Symptoms Multi-Select Checklist */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mb-6">
+        {/* Symptoms Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
           {symptomChecklist.map((symptom) => {
             const isChecked = selectedSymptoms.includes(symptom.id);
             return (
               <button
                 key={symptom.id}
                 onClick={() => toggleSymptom(symptom.id)}
-                className={`p-3 rounded-xl border text-left text-xs transition-all flex items-start gap-2.5 ${
+                className={`p-4 rounded-2xl border text-left text-xs transition-all flex items-start gap-3 ${
                   isChecked
                     ? symptom.severity === 'severe'
-                      ? 'border-rose-600 bg-rose-50/70 font-semibold text-rose-950'
+                      ? 'border-rose-600 bg-rose-50/80 font-bold text-rose-950 shadow-sm ring-1 ring-rose-600'
                       : symptom.severity === 'moderate'
-                      ? 'border-amber-600 bg-amber-50/70 font-medium text-amber-950'
-                      : 'border-slate-900 bg-slate-50 font-medium text-slate-950'
-                    : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                      ? 'border-amber-600 bg-amber-50/80 font-semibold text-amber-950 shadow-sm ring-1 ring-amber-600'
+                      : 'border-slate-900 bg-slate-900 text-white font-semibold shadow-sm'
+                    : 'border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 text-slate-700'
                 }`}
               >
                 <div
-                  className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 border ${
+                  className={`w-4 h-4 rounded-md mt-0.5 flex items-center justify-center shrink-0 border ${
                     isChecked
-                      ? 'bg-slate-900 border-slate-900 text-white'
+                      ? 'bg-white border-white text-slate-950'
                       : 'border-slate-300 bg-white'
                   }`}
                 >
                   {isChecked && <CheckCircle2 className="w-3.5 h-3.5" />}
                 </div>
-                <span>{symptom.label}</span>
+                <div>
+                  <span className="block">{symptom.label}</span>
+                  <span
+                    className={`text-[10px] block mt-0.5 opacity-75 font-medium ${
+                      isChecked ? 'text-inherit' : 'text-slate-400'
+                    }`}
+                  >
+                    {symptom.zone}
+                  </span>
+                </div>
               </button>
             );
           })}
         </div>
 
-        {/* Dynamic Triage Result Box */}
+        {/* Dynamic Triage Output */}
         {activeTriage ? (
           <div
-            className={`p-5 rounded-2xl border space-y-4 ${
+            className={`p-6 rounded-3xl border space-y-4 ${
               activeTriage.level === 'Severe'
                 ? 'bg-rose-50 border-rose-300 text-rose-950'
                 : activeTriage.level === 'Moderate'
@@ -180,74 +173,67 @@ export const SymptomAndHelpCenter: React.FC = () => {
                 : 'bg-slate-50 border-slate-300 text-slate-900'
             }`}
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-current/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-current/15">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider block">
-                  Triage Assessment: {activeTriage.level} Severity
+                <span className="text-[10px] font-black uppercase tracking-wider block">
+                  Triage Result: {activeTriage.level} Severity
                 </span>
-                <h3 className="font-bold text-base mt-0.5">{activeTriage.recommendedAction}</h3>
+                <h3 className="font-extrabold text-lg mt-0.5">{activeTriage.recommendedAction}</h3>
               </div>
-              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/80 border border-current/20 self-start sm:self-auto">
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/80 border border-current/20 self-start sm:self-auto">
                 {activeTriage.urgency}
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div>
-                <span className="font-semibold block mb-1.5">Immediate Relief Measures:</span>
-                <ul className="space-y-1 list-disc pl-4 text-current/90">
+                <span className="font-bold block mb-1.5">Recommended Home/Hotel Relief:</span>
+                <ul className="space-y-1.5 list-disc pl-4 text-current/90">
                   {activeTriage.homeCare.map((step, idx) => (
                     <li key={idx}>{step}</li>
                   ))}
                 </ul>
               </div>
               <div>
-                <span className="font-semibold block mb-1.5">When to Seek Medical Review:</span>
-                <p className="text-current/90 leading-relaxed">{activeTriage.whenToSeekDoctor}</p>
+                <span className="font-bold block mb-1.5">When to Seek Medical Care:</span>
+                <p className="text-current/90 leading-relaxed mb-3">{activeTriage.whenToSeekDoctor}</p>
                 {activeTriage.level === 'Severe' && (
-                  <div className="mt-3">
-                    <a
-                      href="tel:995"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-rose-700 text-white rounded-lg text-xs font-bold hover:bg-rose-800"
-                    >
-                      <PhoneCall className="w-3.5 h-3.5" />
-                      <span>Dial SCDF Ambulance 995 Immediately</span>
-                    </a>
-                  </div>
+                  <a
+                    href="tel:995"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-rose-700 text-white rounded-xl text-xs font-black hover:bg-rose-800 shadow-md"
+                  >
+                    <PhoneCall className="w-4 h-4" />
+                    <span>Dial SCDF Ambulance 995 Now</span>
+                  </a>
                 )}
               </div>
             </div>
           </div>
         ) : (
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-500">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-500">
             Select one or more symptoms above to view instant triage instructions and medical recommendations.
           </div>
         )}
       </section>
 
-      {/* Measures to Manage Haze for Different Age Groups & Cohorts */}
-      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+      {/* Cohort Measures */}
+      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm">
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <span>Target Segments & Vulnerable Groups</span>
-            <span aria-hidden="true">·</span>
-            <span>MOH Clinical Guidelines</span>
-          </div>
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">
+            Target Segments & Vulnerable Cohorts
+          </span>
           <h2 className="text-xl font-bold text-slate-900">
             Measures to Manage Haze for Different Age Groups
           </h2>
-          <p className="text-xs text-slate-600 mt-1">
-            Children, seniors, and asthma sufferers experience different physiological impacts from smoke particulates. Select a group below for tailored safety measures:
-          </p>
         </div>
 
         {/* Cohort Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-100 mb-6">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-100 mb-6">
           {AGE_GROUP_GUIDELINES.map((item, idx) => (
             <button
               key={item.group}
               onClick={() => setSelectedCohortIndex(idx)}
-              className={`px-3.5 py-2 text-xs font-medium rounded-xl whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 text-xs font-semibold rounded-xl whitespace-nowrap transition-all ${
                 selectedCohortIndex === idx
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
@@ -258,81 +244,62 @@ export const SymptomAndHelpCenter: React.FC = () => {
           ))}
         </div>
 
-        {/* Active Cohort Deep Dive Card */}
+        {/* Selected Cohort Card */}
         {(() => {
           const currentCohort = AGE_GROUP_GUIDELINES[selectedCohortIndex];
           return (
             <div className="space-y-6">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div>
-                  <h3 className="font-bold text-slate-900 text-base">{currentCohort.group}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{currentCohort.subtext}</p>
-                </div>
-              </div>
-
-              {/* Threshold Actions Matrix */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 text-xs space-y-1.5">
-                  <span className="font-bold text-emerald-800 block">
-                    PSI 0 – 100 (Good to Moderate)
-                  </span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/40 text-xs space-y-2">
+                  <span className="font-extrabold text-emerald-900 block">PSI 0 – 100 (Normal)</span>
                   <p className="text-slate-700 leading-relaxed">{currentCohort.psiUnder100}</p>
                 </div>
-                <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/40 text-xs space-y-1.5">
-                  <span className="font-bold text-amber-800 block">
-                    PSI 101 – 200 (Unhealthy)
-                  </span>
+                <div className="p-5 rounded-2xl border border-amber-200 bg-amber-50/40 text-xs space-y-2">
+                  <span className="font-extrabold text-amber-900 block">PSI 101 – 200 (Unhealthy)</span>
                   <p className="text-slate-700 leading-relaxed">{currentCohort.psi101To200}</p>
                 </div>
-                <div className="p-4 rounded-xl border border-rose-200 bg-rose-50/40 text-xs space-y-1.5">
-                  <span className="font-bold text-rose-800 block">
-                    PSI 201+ (Very Unhealthy / Hazardous)
-                  </span>
+                <div className="p-5 rounded-2xl border border-rose-200 bg-rose-50/40 text-xs space-y-2">
+                  <span className="font-extrabold text-rose-900 block">PSI 201+ (Hazardous)</span>
                   <p className="text-slate-700 leading-relaxed">{currentCohort.psi201Plus}</p>
                 </div>
               </div>
 
-              {/* Key Precautions Checklist */}
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-2">
-                  Key Precautions for this Group:
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <span className="text-xs font-bold text-slate-900 block mb-2">
+                  Key Precautions for {currentCohort.group}:
                 </span>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-slate-600">
                   {currentCohort.keyPrecautions.map((prec, i) => (
-                    <div
-                      key={i}
-                      className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 flex items-start gap-2"
-                    >
+                    <li key={i} className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                       <span>{prec}</span>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             </div>
           );
         })()}
       </section>
 
-      {/* Singapore Healthcare Directory & Telemedicine */}
-      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      {/* Hospital & Telemedicine Directory */}
+      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              Hospitals, 24-Hour GP Clinics & Telemedicine
+            <h2 className="text-xl font-bold text-slate-900">
+              Singapore Hospitals, 24-Hour GP Clinics & Telemedicine
             </h2>
-            <p className="text-xs text-slate-500 mt-1">
-              Top tourist-friendly medical facilities with English-speaking doctors, international insurance documentation, and hotel medicine delivery
+            <p className="text-xs text-slate-500 mt-0.5">
+              English-speaking doctors, direct billing for international travel insurance, and hotel room delivery
             </p>
           </div>
 
-          {/* Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
             {['All', 'Emergency', 'Children', '24h GP', 'Telehealth'].map((f) => (
               <button
                 key={f}
                 onClick={() => setFacilityFilter(f)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-xl whitespace-nowrap transition-all ${
                   facilityFilter === f
                     ? 'bg-slate-900 text-white'
                     : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
@@ -344,32 +311,34 @@ export const SymptomAndHelpCenter: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredFacilities.map((fac) => (
             <div
               key={fac.id}
-              className="p-5 rounded-2xl border border-slate-200 bg-slate-50/40 hover:bg-white transition-colors flex flex-col justify-between space-y-4"
+              className="p-6 rounded-3xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all flex flex-col justify-between space-y-4"
             >
               <div>
-                <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1.5">
-                  <span className="font-semibold text-slate-900">{fac.type}</span>
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                  <span className="font-bold text-slate-900 text-xs">{fac.type}</span>
                   <span>{fac.area}</span>
                 </div>
 
-                <h3 className="font-bold text-slate-900 text-base mb-1.5">{fac.name}</h3>
+                <h3 className="font-extrabold text-slate-900 text-lg mb-1 leading-snug">
+                  {fac.name}
+                </h3>
                 <p className="text-xs text-slate-600 mb-3">{fac.address}</p>
 
-                <div className="space-y-1.5 text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200/70">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-slate-500">Wait Time:</span>
-                    <span className="font-medium text-slate-800">{fac.estimatedWaitTime}</span>
+                <div className="space-y-1 text-xs text-slate-600 bg-white p-3.5 rounded-2xl border border-slate-200/70">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Wait Time:</span>
+                    <span className="font-semibold text-slate-800">{fac.estimatedWaitTime}</span>
                   </div>
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-slate-500">Languages:</span>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Languages:</span>
                     <span>{fac.languages.join(', ')}</span>
                   </div>
                   <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-100">
-                    <span className="font-medium text-slate-700">Insurance: </span>
+                    <span className="font-semibold text-slate-700">Insurance: </span>
                     {fac.insuranceAccepted}
                   </div>
                 </div>
@@ -378,7 +347,7 @@ export const SymptomAndHelpCenter: React.FC = () => {
               <div className="pt-2 flex items-center justify-between gap-3 text-xs">
                 <a
                   href={`tel:${fac.phone.replace(/\s+/g, '')}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-white font-medium hover:bg-slate-800 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   <span>Call {fac.phone}</span>
@@ -390,50 +359,15 @@ export const SymptomAndHelpCenter: React.FC = () => {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 font-medium"
+                  className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-bold"
                 >
                   <MapPin className="w-3.5 h-3.5" />
-                  <span>Get Directions</span>
-                  <ExternalLink className="w-3 h-3 text-slate-400" />
+                  <span>Directions</span>
+                  <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Tourist Travel Insurance & Documentation Checklist */}
-      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-          <FileText className="w-4 h-4 text-slate-600" />
-          <span>Foreign Visitor Insurance Claim Checklist</span>
-        </div>
-        <h3 className="text-base font-bold text-slate-900 mb-3">
-          How to Ensure Your Singapore Medical Expenses are Reimbursed
-        </h3>
-        <p className="text-xs text-slate-600 leading-relaxed mb-4">
-          Singapore clinics and hospitals provide internationally compliant documentation in English. When receiving treatment for haze-related symptoms, always request the following before leaving the clinic:
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="font-bold text-slate-900 block">1. Itemized Tax Invoice</span>
-            <p className="text-slate-600 text-[11px]">
-              Must break down consultation fees, medications (e.g. Salbutamol inhaler, antihistamines), and tests separately.
-            </p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="font-bold text-slate-900 block">2. Doctor’s Medical Memo</span>
-            <p className="text-slate-600 text-[11px]">
-              Explicitly noting the clinical diagnosis (e.g. "Acute bronchospasm secondary to environmental smoke haze").
-            </p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="font-bold text-slate-900 block">3. Doctor Registration Number</span>
-            <p className="text-slate-600 text-[11px]">
-              Singapore Medical Council (SMC) registration stamp on the memo is mandatory for overseas insurance processors.
-            </p>
-          </div>
         </div>
       </section>
     </div>

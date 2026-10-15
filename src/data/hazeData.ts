@@ -14,6 +14,10 @@ export const IMAGES = {
   jewel: '/src/assets/images/jewel_changi_indoor_1792051274520.jpg',
   cloudForest: '/src/assets/images/cloud_forest_dome_1792051274526.jpg',
   pharmacy: '/src/assets/images/pharmacy_health_supplies_1792051275358.jpg',
+  aquarium: '/src/assets/images/sea_aquarium_singapore_1792054198024.jpg',
+  futureWorld: '/src/assets/images/future_world_artscience_1792054199446.jpg',
+  n95Studio: '/src/assets/images/n95_respirator_studio_1792054199395.jpg',
+  islandAerial: '/src/assets/images/singapore_map_skyline_1792054199541.jpg',
 };
 
 // Baseline simulated NEA data in case API is offline or rate limited
@@ -111,7 +115,7 @@ export const ITINERARY_SUBSTITUTIONS: ItinerarySubstitution[] = [
     highlight: 'Home to over 100,000 marine animals across 40 habitats with massive panoramic viewing panels.',
     admission: 'Ticketed',
     suggestedDuration: '3 hours',
-    imageUrl: IMAGES.jewel,
+    imageUrl: IMAGES.aquarium,
     practicalTips: [
       'Board the Sentosa Express or drive directly into the basement carpark to stay 100% sheltered.',
       'Combine with dinner inside Resorts World Sentosa mall or the Michelin-starred dining galleria.',
@@ -213,7 +217,7 @@ export const ITINERARY_SUBSTITUTIONS: ItinerarySubstitution[] = [
     highlight: 'Indoor Venetian-style sampan ride along indoor canal, Digital Light Canvas, and Future World exhibition.',
     admission: 'Free',
     suggestedDuration: '3 hours',
-    imageUrl: IMAGES.cloudForest,
+    imageUrl: IMAGES.futureWorld,
     practicalTips: [
       'Take the indoor sampan boat ride along the canal running through the center of the mall.',
       'Visit teamLab\'s Future World exhibition inside ArtScience Museum (fully indoors).',
