@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import {
-  ShieldAlert,
   ShoppingBag,
   CheckCircle2,
   XCircle,
-  HelpCircle,
   Clock,
   MapPin,
   Phone,
-  Search,
   ExternalLink,
-  ChevronDown,
-  ChevronUp,
+  ShieldCheck,
 } from 'lucide-react';
 import { MEDICAL_SUPPLIES, PHARMACY_CHAINS, IMAGES } from '../data/hazeData';
 import { MedicalSupplyItem } from '../types/haze';
@@ -19,7 +15,6 @@ import { MedicalSupplyItem } from '../types/haze';
 export const WhatToBuyGuide: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSupply, setSelectedSupply] = useState<MedicalSupplyItem>(MEDICAL_SUPPLIES[0]);
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   const categories = ['All', 'Respiratory Protection', 'Eye Care', 'Throat & Nasal', 'Medication & Devices'];
 
@@ -28,40 +23,38 @@ export const WhatToBuyGuide: React.FC = () => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header Banner */}
       <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7">
             <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
-              <span>Value Proposition 2</span>
+              <span>Tourist Pharmacy Guide</span>
               <span aria-hidden="true">·</span>
-              <span>Official Medical Supplies & Pharmacy Catalog</span>
-              <span aria-hidden="true">·</span>
-              <span>Singapore Pricing Guide</span>
+              <span>Fair Singapore Retail Prices</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-3">
-              What to Buy & Where to Buy It in Singapore
+              Masks & Health Supplies in Singapore
             </h1>
             <p className="text-slate-600 text-sm leading-relaxed mb-4">
-              Don’t waste money on ineffective products. Learn why certified N95 respirators are necessary for fine PM2.5 smoke, discover doctor-recommended eye and throat essentials, and locate official Singapore retail stockists.
+              Here is what to look for at any local pharmacy. Learn why certified N95 masks work against fine smoke (while regular surgical masks do not), and find trusted stores located right inside MRT stations and malls.
             </p>
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-              <span className="font-semibold text-slate-900">Partner Retailers:</span>
+              <span className="font-semibold text-slate-900">Found everywhere at:</span>
               <span>Guardian</span>
               <span aria-hidden="true">·</span>
               <span>Watsons</span>
               <span aria-hidden="true">·</span>
               <span>Unity</span>
               <span aria-hidden="true">·</span>
-              <span>Mustafa Centre (24h)</span>
+              <span>7-Eleven & Mustafa Centre (24h)</span>
             </div>
           </div>
 
           <div className="lg:col-span-5 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-xs max-h-56">
             <img
               src={IMAGES.pharmacy}
-              alt="Singapore Guardian Pharmacy health supplies and N95 masks display"
+              alt="Singapore Pharmacy health supplies and masks"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
             />
@@ -69,87 +62,84 @@ export const WhatToBuyGuide: React.FC = () => {
         </div>
       </section>
 
-      {/* Critical Educational Section: N95 vs Surgical Mask (The #1 Tourist Mistake) */}
+      {/* N95 vs Surgical Mask Comparison */}
       <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
         <div className="max-w-2xl mb-6">
-          <span className="text-xs font-semibold uppercase tracking-wider text-amber-600">
-            Vital Tourist Guidance
-          </span>
-          <h2 className="text-xl font-bold text-slate-900 mt-1">
-            Why Surgical Masks Do NOT Protect Against Haze
+          <h2 className="text-xl font-bold text-slate-900">
+            N95 vs Regular Surgical Mask: The 30-Second Rule
           </h2>
           <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-            Many tourists mistakenly purchase ordinary blue surgical masks or cloth fashion masks. Here is why the Ministry of Health (MOH) strictly advises against relying on them during transboundary haze:
+            Many visitors buy standard blue medical masks, but they leave open gaps where smoke leaks in. Here is the difference:
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Certified N95 Card */}
-          <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/40 space-y-4">
-            <div className="flex items-center gap-2 text-emerald-800 font-semibold text-sm">
+          <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/50 space-y-3">
+            <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              <span>Certified N95 Respirator (Recommended)</span>
+              <span>Certified N95 Mask (Works for Haze)</span>
             </div>
-            <ul className="space-y-2.5 text-xs text-slate-700">
+            <ul className="space-y-2 text-xs text-slate-700">
               <li className="flex items-start gap-2">
                 <span className="font-semibold text-slate-900 shrink-0">Tight Seal:</span>
-                <span>Designed to fit closely to facial contours, ensuring all inhaled air passes through the filter matrix.</span>
+                <span>Seals firmly against your cheeks and nose bridge so smoke cannot bypass the filter.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="font-semibold text-slate-900 shrink-0">Filtration Efficiency:</span>
-                <span>Blocks at least 95% of microscopic fine particulates down to 0.1–0.3 microns, including PM2.5 haze smoke.</span>
+                <span className="font-semibold text-slate-900 shrink-0">Filters Smoke:</span>
+                <span>Blocks at least 95% of fine PM2.5 smoke particles.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="font-semibold text-slate-900 shrink-0">Official Standard:</span>
-                <span>NIOSH N95, EN149 FFP2, or Singapore MOH certified respirators (e.g. 3M 8210, 3M Aura, AIR+).</span>
+                <span className="font-semibold text-slate-900 shrink-0">Price in SG:</span>
+                <span>~S$2.50 each (e.g. 3M 8210, 3M Aura, or AIR+).</span>
               </li>
             </ul>
           </div>
 
           {/* Regular Surgical Mask Card */}
-          <div className="p-5 rounded-2xl border border-rose-200 bg-rose-50/40 space-y-4">
-            <div className="flex items-center gap-2 text-rose-800 font-semibold text-sm">
+          <div className="p-5 rounded-2xl border border-rose-200 bg-rose-50/50 space-y-3">
+            <div className="flex items-center gap-2 text-rose-800 font-bold text-sm">
               <XCircle className="w-5 h-5 text-rose-600 shrink-0" />
-              <span>Standard Surgical / Paper Mask (Ineffective)</span>
+              <span>Blue Surgical Mask (Does NOT Filter Smoke)</span>
             </div>
-            <ul className="space-y-2.5 text-xs text-slate-700">
+            <ul className="space-y-2 text-xs text-slate-700">
               <li className="flex items-start gap-2">
-                <span className="font-semibold text-slate-900 shrink-0">Gaps & Leakage:</span>
-                <span>Loose-fitting around cheeks, nose, and chin. Air simply flows through sides bypassing filtration entirely.</span>
+                <span className="font-semibold text-slate-900 shrink-0">Loose Fit:</span>
+                <span>Gaps at your cheeks and chin let outdoor smoke flow right in with every breath.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="font-semibold text-slate-900 shrink-0">Large Pore Size:</span>
-                <span>Engineered only to block coarse liquid droplets (cough spatter). PM2.5 smoke particles easily penetrate.</span>
+                <span className="font-semibold text-slate-900 shrink-0">Large Pores:</span>
+                <span>Designed only for cough droplets, not microscopic combustion smoke.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="font-semibold text-slate-900 shrink-0">False Sense of Security:</span>
-                <span>Wearing a surgical mask in heavy haze leads tourists to stay outdoors longer while breathing toxic PM2.5.</span>
+                <span className="font-semibold text-slate-900 shrink-0">Verdict:</span>
+                <span>Don't rely on these for haze protection.</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Step-by-Step 4-Point N95 Fit Test */}
+        {/* 4-Step Quick Fit Check */}
         <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-          <span className="font-semibold text-slate-900 block mb-2">
-            The 4-Step N95 Seal Check (Before Stepping Outside):
+          <span className="font-bold text-slate-900 block mb-2">
+            How to put on an N95 in 15 seconds:
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-slate-600">
             <div>
-              <span className="font-medium text-slate-800 block">1. Position</span>
-              <span>Cup respirator in hand, position over nose and chin.</span>
+              <span className="font-semibold text-slate-800 block">1. Position</span>
+              <span>Hold mask over nose and mouth with chin securely in cup.</span>
             </div>
             <div>
-              <span className="font-medium text-slate-800 block">2. Straps</span>
-              <span>Pull upper strap to crown of head, lower strap below ears.</span>
+              <span className="font-semibold text-slate-800 block">2. Straps</span>
+              <span>Pull top strap over head, lower strap behind your neck.</span>
             </div>
             <div>
-              <span className="font-medium text-slate-800 block">3. Nosepiece</span>
-              <span>Mould metal nose strip using fingers of both hands.</span>
+              <span className="font-semibold text-slate-800 block">3. Nose Clip</span>
+              <span>Pinch the metal strip with two hands to mold to your nose bridge.</span>
             </div>
             <div>
-              <span className="font-medium text-slate-800 block">4. Seal Test</span>
-              <span>Inhale sharply. The mask should collapse slightly toward your face without air leaking at edges.</span>
+              <span className="font-semibold text-slate-800 block">4. Seal Check</span>
+              <span>Breathe in quickly. The mask should collapse slightly toward your face.</span>
             </div>
           </div>
         </div>
@@ -159,11 +149,11 @@ export const WhatToBuyGuide: React.FC = () => {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              Recommended Singapore Tourist Haze Kit
+            <h2 className="text-lg font-bold text-slate-900">
+              Tourist Haze Essentials & Prices
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Available over-the-counter across all authorized Singapore retail pharmacies
+              Available over the counter at any Guardian, Watsons, or Unity pharmacy
             </p>
           </div>
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
@@ -197,7 +187,7 @@ export const WhatToBuyGuide: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between text-[11px] text-slate-500 mb-2">
                   <span>{item.category}</span>
-                  <span className="font-semibold text-slate-900 font-mono">
+                  <span className="font-bold text-slate-900 font-mono">
                     {item.singaporePriceSgd}
                   </span>
                 </div>
@@ -211,16 +201,16 @@ export const WhatToBuyGuide: React.FC = () => {
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 space-y-2 text-[11px]">
+              <div className="pt-3 border-t border-slate-100 space-y-1.5 text-[11px]">
                 <div className="flex items-center justify-between text-slate-500">
-                  <span>Recommended:</span>
+                  <span>Brands:</span>
                   <span className="font-medium text-slate-800 text-right">
                     {item.recommendedBrands[0]}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-slate-500">
-                  <span>Stock Availability:</span>
-                  <span className="text-emerald-700 font-medium">{item.stockAvailability}</span>
+                  <span>Stock:</span>
+                  <span className="text-emerald-700 font-medium">Readily Available</span>
                 </div>
               </div>
             </div>
@@ -228,14 +218,14 @@ export const WhatToBuyGuide: React.FC = () => {
         </div>
       </section>
 
-      {/* Major Singapore Pharmacy Chains & 24-Hour Stockists */}
+      {/* Where to Buy */}
       <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-bold text-slate-900">
             Where to Buy: Major Pharmacy Chains & 24/7 Outlets
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Standard pricing is maintained across all official chains. No black-market markup permitted under Singapore consumer regulations.
+            Prices are government-regulated in Singapore; no tourist gouging permitted.
           </p>
         </div>
 
@@ -243,7 +233,7 @@ export const WhatToBuyGuide: React.FC = () => {
           {PHARMACY_CHAINS.map((chain) => (
             <div
               key={chain.name}
-              className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white transition-colors flex flex-col justify-between space-y-4"
+              className="p-5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white transition-colors flex flex-col justify-between space-y-4"
             >
               <div>
                 <div className="flex items-center justify-between mb-1">
@@ -257,7 +247,7 @@ export const WhatToBuyGuide: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5 mb-3">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
+                  <span className="text-[11px] font-bold text-slate-700 block">
                     Key Tourist Branches:
                   </span>
                   <ul className="text-xs text-slate-700 space-y-1">

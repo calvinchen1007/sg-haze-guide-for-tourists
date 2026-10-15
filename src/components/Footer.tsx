@@ -30,7 +30,7 @@ export const Footer: React.FC<{
                   onClick={() => onSelectTab('live')}
                   className="hover:text-slate-900 transition-colors"
                 >
-                  Live Regional PSI & 1-hr PM2.5
+                  Air Quality & PSI
                 </button>
               </li>
               <li>
@@ -38,7 +38,7 @@ export const Footer: React.FC<{
                   onClick={() => onSelectTab('itinerary')}
                   className="hover:text-slate-900 transition-colors"
                 >
-                  Indoor Itinerary Substitution
+                  Indoor Swaps
                 </button>
               </li>
               <li>
@@ -46,7 +46,7 @@ export const Footer: React.FC<{
                   onClick={() => onSelectTab('supplies')}
                   className="hover:text-slate-900 transition-colors"
                 >
-                  What to Buy & N95 Fitting
+                  Masks & Pharmacies
                 </button>
               </li>
               <li>
@@ -54,7 +54,7 @@ export const Footer: React.FC<{
                   onClick={() => onSelectTab('health')}
                   className="hover:text-slate-900 transition-colors"
                 >
-                  Symptom Triage & 24h Clinics
+                  Symptoms & Clinics
                 </button>
               </li>
               <li>
@@ -62,7 +62,7 @@ export const Footer: React.FC<{
                   onClick={() => onSelectTab('education')}
                   className="hover:text-slate-900 transition-colors"
                 >
-                  What is Haze? (Origin & Winds)
+                  Haze 101 Guide
                 </button>
               </li>
             </ul>

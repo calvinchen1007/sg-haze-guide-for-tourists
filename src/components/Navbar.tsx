@@ -38,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'live' ? 'text-slate-950 font-semibold underline underline-offset-8 decoration-2 decoration-slate-900' : 'hover:text-slate-900'
             }`}
           >
-            Live Haze
+            Air Quality
           </button>
           <button
             onClick={() => onSelectTab('itinerary')}
@@ -46,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'itinerary' ? 'text-slate-950 font-semibold underline underline-offset-8 decoration-2 decoration-slate-900' : 'hover:text-slate-900'
             }`}
           >
-            Itinerary Swap
+            Indoor Swaps
           </button>
           <button
             onClick={() => onSelectTab('supplies')}
@@ -54,7 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'supplies' ? 'text-slate-950 font-semibold underline underline-offset-8 decoration-2 decoration-slate-900' : 'hover:text-slate-900'
             }`}
           >
-            What to Buy
+            Masks & Shops
           </button>
           <button
             onClick={() => onSelectTab('health')}
@@ -62,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'health' ? 'text-slate-950 font-semibold underline underline-offset-8 decoration-2 decoration-slate-900' : 'hover:text-slate-900'
             }`}
           >
-            Medical & Clinics
+            Clinics & Help
           </button>
           <button
             onClick={() => onSelectTab('education')}
@@ -70,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'education' ? 'text-slate-950 font-semibold underline underline-offset-8 decoration-2 decoration-slate-900' : 'hover:text-slate-900'
             }`}
           >
-            What is Haze?
+            Haze 101
           </button>
         </nav>
 
@@ -84,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-50'
             }`}
           >
-            {isSimulating ? `Simulator Active (PSI ${simulatedPsi})` : 'PSI Simulator'}
+            {isSimulating ? `Simulator Active (PSI ${simulatedPsi})` : 'Test Scenario'}
           </button>
         </div>
       </div>
@@ -98,7 +98,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}
         >
           <ShieldAlert className="w-3.5 h-3.5" />
-          <span>Live Haze</span>
+          <span>Air Quality</span>
         </button>
         <button
           onClick={() => onSelectTab('itinerary')}
@@ -107,7 +107,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}
         >
           <Compass className="w-3.5 h-3.5" />
-          <span>Itinerary Swap</span>
+          <span>Indoor Swaps</span>
         </button>
         <button
           onClick={() => onSelectTab('supplies')}
@@ -116,7 +116,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}
         >
           <ShoppingBag className="w-3.5 h-3.5" />
-          <span>What to Buy</span>
+          <span>Masks</span>
         </button>
         <button
           onClick={() => onSelectTab('health')}
@@ -134,7 +134,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-          <span>Guide</span>
+          <span>Haze 101</span>
         </button>
       </div>
     </header>
