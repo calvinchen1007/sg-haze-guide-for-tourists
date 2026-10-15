@@ -4,7 +4,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Navbar } from './components/Navbar';
+import { Navbar, AppTab } from './components/Navbar';
+import { HomeOverview } from './components/HomeOverview';
 import { LiveHazeMonitor } from './components/LiveHazeMonitor';
 import { ItinerarySubstitutionEngine } from './components/ItinerarySubstitutionEngine';
 import { WhatToBuyGuide } from './components/WhatToBuyGuide';
@@ -16,10 +17,18 @@ import { Footer } from './components/Footer';
 import { fetchLiveSingaporePsi } from './services/psiService';
 import { RegionalPsiData, SingaporeRegion } from './types/haze';
 import { FALLBACK_PSI_DATA } from './data/hazeData';
+import { LocationMatchResult } from './utils/locationResolver';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'live' | 'itinerary' | 'supplies' | 'health' | 'education'>('live');
+  const [activeTab, setActiveTab] = useState<AppTab>('overview');
   const [selectedRegion, setSelectedRegion] = useState<SingaporeRegion>('central');
+  const [userLocation, setUserLocation] = useState<LocationMatchResult | null>({
+    query: 'Marina Bay Sands',
+    matchedName: 'Marina Bay & Bayfront',
+    region: 'central',
+    regionDisplayName: 'Central Singapore',
+    note: 'Popular Tourist Landmark',
+  });
   const [regionsData, setRegionsData] = useState<Record<SingaporeRegion, RegionalPsiData>>(
     FALLBACK_PSI_DATA as Record<SingaporeRegion, RegionalPsiData>
   );
@@ -96,6 +105,18 @@ export default function App() {
 
       {/* Main Viewport Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {activeTab === 'overview' && (
+          <HomeOverview
+            currentRegionData={effectiveRegionData}
+            allRegionsData={regionsData}
+            selectedRegion={selectedRegion}
+            onSelectRegion={setSelectedRegion}
+            onNavigateToTab={(tab) => setActiveTab(tab)}
+            userLocation={userLocation}
+            onSetUserLocation={setUserLocation}
+          />
+        )}
+
         {activeTab === 'live' && (
           <LiveHazeMonitor
             currentRegionData={effectiveRegionData}
@@ -109,6 +130,8 @@ export default function App() {
             onNavigateToEducation={() => setActiveTab('education')}
             alertThresholdEnabled={alertThresholdEnabled}
             onToggleAlertThreshold={() => setAlertThresholdEnabled(!alertThresholdEnabled)}
+            userLocation={userLocation}
+            onSetUserLocation={setUserLocation}
           />
         )}
 
@@ -122,7 +145,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer onSelectTab={setActiveTab} />
+      <Footer onSelectTab={(tab) => setActiveTab(tab)} />
 
       {/* Interactive Scenario Simulator Modal */}
       <HazeSimulatorModal

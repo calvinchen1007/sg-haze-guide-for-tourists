@@ -2,7 +2,7 @@ import React from 'react';
 import { ShieldCheck, Phone } from 'lucide-react';
 
 export const Footer: React.FC<{
-  onSelectTab: (tab: 'live' | 'itinerary' | 'supplies' | 'health' | 'education') => void;
+  onSelectTab: (tab: 'overview' | 'live' | 'itinerary' | 'supplies' | 'health' | 'education') => void;
 }> = ({ onSelectTab }) => {
   return (
     <footer className="bg-white border-t border-slate-200 mt-16 text-xs text-slate-500">
@@ -25,6 +25,14 @@ export const Footer: React.FC<{
           <div className="space-y-2">
             <span className="font-semibold text-slate-900 block text-xs">Essential Tools</span>
             <ul className="space-y-1.5 text-[11px]">
+              <li>
+                <button
+                  onClick={() => onSelectTab('overview')}
+                  className="hover:text-slate-900 transition-colors"
+                >
+                  Home & Overview
+                </button>
+              </li>
               <li>
                 <button
                   onClick={() => onSelectTab('live')}

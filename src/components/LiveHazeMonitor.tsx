@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Wind,
   RefreshCw,
@@ -8,13 +8,15 @@ import {
   MapPin,
   Info,
   Shield,
-  Eye,
   Activity,
-  Layers,
   ArrowUpRight,
+  Search,
+  Navigation,
 } from 'lucide-react';
 import { RegionalPsiData, SingaporeRegion } from '../types/haze';
 import { PSI_ADVISORY_BANDS, IMAGES } from '../data/hazeData';
+import { SingaporeRegionalMap } from './SingaporeRegionalMap';
+import { resolveSingaporeLocation, LocationMatchResult } from '../utils/locationResolver';
 
 interface LiveHazeMonitorProps {
   currentRegionData: RegionalPsiData;
@@ -28,6 +30,8 @@ interface LiveHazeMonitorProps {
   onNavigateToEducation: () => void;
   alertThresholdEnabled: boolean;
   onToggleAlertThreshold: () => void;
+  userLocation?: LocationMatchResult | null;
+  onSetUserLocation?: (loc: LocationMatchResult | null) => void;
 }
 
 export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
@@ -42,7 +46,19 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
   onNavigateToEducation,
   alertThresholdEnabled,
   onToggleAlertThreshold,
+  userLocation,
+  onSetUserLocation,
 }) => {
+  const [localSearch, setLocalSearch] = useState<string>('');
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!localSearch.trim()) return;
+    const match = resolveSingaporeLocation(localSearch);
+    if (onSetUserLocation) onSetUserLocation(match);
+    onSelectRegion(match.region);
+  };
+
   const getStatusColor = (status: RegionalPsiData['status']) => {
     switch (status) {
       case 'Good':
@@ -85,22 +101,7 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
 
   const statusStyle = getStatusColor(currentRegionData.status);
 
-  // Map coordinates for visual pins on Singapore island
-  const regionPins: Array<{
-    id: SingaporeRegion;
-    name: string;
-    sub: string;
-    x: number; // percentage
-    y: number; // percentage
-  }> = [
-    { id: 'north', name: 'North', sub: 'Woodlands / Mandai', x: 48, y: 22 },
-    { id: 'west', name: 'West', sub: 'Jurong / Clementi', x: 22, y: 54 },
-    { id: 'central', name: 'Central', sub: 'Orchard / Marina Bay', x: 50, y: 62 },
-    { id: 'east', name: 'East', sub: 'Changi / Tampines', x: 80, y: 46 },
-    { id: 'south', name: 'South', sub: 'Sentosa / HabourFront', x: 46, y: 84 },
-  ];
-
-  // Calculate arc stroke offset for circular gauge (max 350 PSI for gauge circumference)
+  // Calculate arc stroke offset for circular gauge
   const clampedPsi = Math.min(Math.max(currentRegionData.psi24Hourly, 0), 350);
   const strokeDashoffset = 440 - (440 * clampedPsi) / 350;
 
@@ -113,7 +114,7 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
             src={IMAGES.skyline}
             alt="Singapore Marina Bay Skyline"
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover opacity-45 scale-105 transition-transform duration-700"
+            className="w-full h-full object-cover opacity-45 scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30" />
@@ -122,54 +123,53 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
         <div className="relative z-10 p-6 sm:p-10 lg:p-12 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-white mb-4">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            <span>Singapore National Environment Agency Live Network</span>
+            <span>Singapore National Environment Agency Live Feed</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight">
-            Clear Skies or Haze Days, <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-sky-200">
-              Never Miss Singapore.
-            </span>
+            Live Singapore Haze Monitor & Geographic Map
           </h1>
 
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mb-8">
-            Live 1-hr PM2.5 and 24-hr PSI tracking across all 5 zones. When smoke levels elevate, seamlessly swap open-air walks with Singapore’s air-conditioned megadomes and subterranean city trails.
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mb-6">
+            Real-time environmental data for the 5 official sectors. Enter your current hotel or destination below to immediately reveal your local readings.
           </p>
 
-          <div className="flex flex-wrap items-center gap-3">
+          {/* Quick Location Search Bar within Live Monitor */}
+          <form onSubmit={handleSearchSubmit} className="max-w-xl flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Enter hotel or attraction (e.g. Sentosa, Marina Bay Sands)..."
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-900/90 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white"
+              />
+            </div>
             <button
-              onClick={onNavigateToItinerary}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm hover:bg-slate-100 transition-all shadow-md active:scale-98"
+              type="submit"
+              className="px-4 py-2.5 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm hover:bg-slate-100 transition-colors shadow-sm shrink-0"
             >
-              <Compass className="w-4 h-4 text-slate-950" />
-              <span>Explore Indoor Substitutions</span>
+              Match Zone
             </button>
-            <button
-              onClick={onNavigateToSupplies}
-              className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-white font-medium text-xs sm:text-sm border border-white/20 backdrop-blur-sm transition-all"
-            >
-              <ShoppingBag className="w-4 h-4 text-slate-300" />
-              <span>N95 Masks & Pharmacy Stock</span>
-            </button>
-            <button
-              onClick={onNavigateToEducation}
-              className="inline-flex items-center gap-1.5 px-3.5 py-3 rounded-xl text-slate-300 hover:text-white text-xs sm:text-sm transition-colors"
-            >
-              <Info className="w-4 h-4" />
-              <span>What Causes Haze?</span>
-            </button>
-          </div>
+          </form>
+
+          {userLocation && (
+            <div className="mt-3 text-xs text-slate-300 flex items-center gap-2">
+              <MapPin className="w-3.5 h-3.5 text-sky-400" />
+              <span>Current matched spot: <strong className="text-white">{userLocation.matchedName}</strong> ({userLocation.region.toUpperCase()})</span>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Main Interactive Dual Console: Visual Circular Gauge & Interactive Visual Map */}
+      {/* Main Dual Console: Circular Gauge & Accurate SVG Regional Map */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Visual Circular Atmospheric Gauge (5 Cols) */}
+        {/* Left Column: Circular Atmospheric Gauge (5 Cols) */}
         <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm flex flex-col justify-between relative overflow-hidden">
           <div className={`absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br ${statusStyle.bgGradient} blur-2xl pointer-events-none`} />
 
           <div>
-            {/* Header with Location & Live Status */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-slate-500" />
@@ -182,11 +182,9 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
               </div>
             </div>
 
-            {/* Circular Gauge Centerpiece */}
             <div className="py-6 flex flex-col items-center justify-center">
               <div className="relative w-56 h-56 flex items-center justify-center">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
-                  {/* Background Track */}
                   <circle
                     cx="80"
                     cy="80"
@@ -195,7 +193,6 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
                     strokeWidth="12"
                     fill="transparent"
                   />
-                  {/* Value Arc */}
                   <circle
                     cx="80"
                     cy="80"
@@ -210,7 +207,6 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
                   />
                 </svg>
 
-                {/* Central Value Readout */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                   <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
                     24-Hr PSI
@@ -224,7 +220,7 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
                 </div>
               </div>
 
-              {/* Instant 1-Hr PM2.5 Strip (Most Actionable for Tourists) */}
+              {/* 1-Hour PM2.5 Strip */}
               <div className="w-full mt-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0">
@@ -239,12 +235,11 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
                     </span>
                   </div>
                 </div>
-                <span className="text-[11px] text-slate-400 font-mono">Real-time</span>
+                <span className="text-[11px] text-slate-400 font-mono">Live</span>
               </div>
             </div>
           </div>
 
-          {/* Bottom Directive */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
             <span>{currentRegionData.updateTime}</span>
             <button
@@ -258,20 +253,19 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
           </div>
         </div>
 
-        {/* Right Column: Interactive Visual Singapore Map (7 Cols) */}
+        {/* Right Column: High-Accuracy Geographic SVG Regional Map (7 Cols) */}
         <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm flex flex-col justify-between">
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 mb-4">
               <div>
                 <h2 className="text-base font-bold text-slate-900">
-                  Interactive Singapore Regional Map
+                  Accurate Singapore Regional Map
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Tap any zone pin to switch live readings and tailored advisories
+                  Click any of the 5 official NEA sectors to inspect local readings
                 </p>
               </div>
 
-              {/* Alert Toggle */}
               <button
                 onClick={onToggleAlertThreshold}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
@@ -285,53 +279,14 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
               </button>
             </div>
 
-            {/* Visual Island Map Display with Interactive Pins */}
-            <div className="relative mt-6 rounded-2xl overflow-hidden border border-slate-200/80 bg-slate-900 aspect-[16/9] max-h-72 shadow-inner group">
-              <img
-                src={IMAGES.islandAerial}
-                alt="Singapore Island Map"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover opacity-60 group-hover:scale-102 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-slate-900/40" />
-
-              {/* Floating Region Pins on the Island Map */}
-              {regionPins.map((pin) => {
-                const pinData = allRegionsData[pin.id];
-                const isSelected = selectedRegion === pin.id;
-                const pinColor = getStatusColor(pinData?.status || 'Moderate');
-
-                return (
-                  <button
-                    key={pin.id}
-                    onClick={() => onSelectRegion(pin.id)}
-                    style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-md border transition-all duration-300 z-20 ${
-                      isSelected
-                        ? 'bg-white text-slate-950 border-white shadow-xl scale-110 ring-4 ring-white/30'
-                        : 'bg-slate-900/80 text-white border-white/20 hover:bg-slate-800 hover:scale-105'
-                    }`}
-                  >
-                    <span
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: pinColor.ring }}
-                    />
-                    <span className="text-[11px] font-bold whitespace-nowrap">
-                      {pin.name}
-                    </span>
-                    <span className="font-mono text-[10px] opacity-80 tabular-nums">
-                      {pinData?.psi24Hourly ?? '--'}
-                    </span>
-                  </button>
-                );
-              })}
-
-              <div className="absolute bottom-3 left-4 text-[11px] text-white/70 flex items-center gap-2">
-                <span>Select zone pin above</span>
-                <span aria-hidden="true">·</span>
-                <span>Coordinates: Singapore Islandwide</span>
-              </div>
-            </div>
+            {/* Embedded SVG Map Component */}
+            <SingaporeRegionalMap
+              selectedRegion={selectedRegion}
+              allRegionsData={allRegionsData}
+              onSelectRegion={onSelectRegion}
+              userLocationName={userLocation?.matchedName}
+              userCoordinates={userLocation?.coordinates}
+            />
           </div>
 
           {/* Quick Zone Selector Strip */}
@@ -358,90 +313,6 @@ export const LiveHazeMonitor: React.FC<LiveHazeMonitorProps> = ({
                 </button>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* Visual Quick Actions Strip: High-Intent Visual Cards */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div
-          onClick={onNavigateToItinerary}
-          className="group relative rounded-3xl overflow-hidden border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-all"
-        >
-          <div className="h-44 w-full overflow-hidden bg-slate-100">
-            <img
-              src={IMAGES.jewel}
-              alt="Jewel Changi Rain Vortex"
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-          </div>
-          <div className="absolute bottom-4 left-4 right-4 text-white">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-300 block mb-1">
-              Itinerary Substitution
-            </span>
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base text-white">Indoor World Attractions</h3>
-              <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </div>
-            <p className="text-slate-300 text-xs mt-1 line-clamp-1">
-              Swap outdoor heat for Jewel Changi & Cloud Forest.
-            </p>
-          </div>
-        </div>
-
-        <div
-          onClick={onNavigateToSupplies}
-          className="group relative rounded-3xl overflow-hidden border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-all"
-        >
-          <div className="h-44 w-full overflow-hidden bg-slate-100">
-            <img
-              src={IMAGES.n95Studio}
-              alt="N95 Respirator Mask"
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-          </div>
-          <div className="absolute bottom-4 left-4 right-4 text-white">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-300 block mb-1">
-              What to Buy Guide
-            </span>
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base text-white">N95 & Pharmacy Locator</h3>
-              <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </div>
-            <p className="text-slate-300 text-xs mt-1 line-clamp-1">
-              Guardian, Watsons, Unity & 24h Mustafa stock.
-            </p>
-          </div>
-        </div>
-
-        <div
-          onClick={onNavigateToEducation}
-          className="group relative rounded-3xl overflow-hidden border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-all"
-        >
-          <div className="h-44 w-full overflow-hidden bg-slate-100">
-            <img
-              src={IMAGES.futureWorld}
-              alt="ArtScience Museum Future World"
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-          </div>
-          <div className="absolute bottom-4 left-4 right-4 text-white">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-sky-300 block mb-1">
-              Air Quality Science
-            </span>
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base text-white">Understanding the Haze</h3>
-              <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </div>
-            <p className="text-slate-300 text-xs mt-1 line-clamp-1">
-              Monsoons, peat smoke & Singapore sheltered transit.
-            </p>
           </div>
         </div>
       </section>
