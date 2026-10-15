@@ -14,6 +14,9 @@ export const IMAGES = {
   jewel: '/src/assets/images/jewel_changi_indoor_1792051274520.jpg',
   cloudForest: '/src/assets/images/cloud_forest_dome_1792051274526.jpg',
   pharmacy: '/src/assets/images/pharmacy_health_supplies_1792051275358.jpg',
+  seaAquarium: '/src/assets/images/sea_aquarium_singapore_1792053235908.jpg',
+  nationalGallery: '/src/assets/images/national_gallery_singapore_1792053258917.jpg',
+  scienceCentre: '/src/assets/images/science_centre_future_dome_1792053259675.jpg',
 };
 
 // Baseline simulated NEA data in case API is offline or rate limited
@@ -111,7 +114,7 @@ export const ITINERARY_SUBSTITUTIONS: ItinerarySubstitution[] = [
     highlight: 'Home to over 100,000 marine animals across 40 habitats with massive panoramic viewing panels.',
     admission: 'Ticketed',
     suggestedDuration: '3 hours',
-    imageUrl: IMAGES.jewel,
+    imageUrl: IMAGES.seaAquarium,
     practicalTips: [
       'Board the Sentosa Express or drive directly into the basement carpark to stay 100% sheltered.',
       'Combine with dinner inside Resorts World Sentosa mall or the Michelin-starred dining galleria.',
@@ -152,7 +155,7 @@ export const ITINERARY_SUBSTITUTIONS: ItinerarySubstitution[] = [
     highlight: 'Splendid neo-classical historic monuments housing the world\'s largest public collection of Singapore & SE Asian art.',
     admission: 'Ticketed',
     suggestedDuration: '2.5 to 3.5 hours',
-    imageUrl: IMAGES.skyline,
+    imageUrl: IMAGES.nationalGallery,
     practicalTips: [
       'Underground pedestrian connections from City Hall MRT straight into the basement concourse.',
       'Spacious high-ceiling climate-controlled galleries offer clean breathable sanctuary.',
@@ -173,7 +176,7 @@ export const ITINERARY_SUBSTITUTIONS: ItinerarySubstitution[] = [
     highlight: 'Over 1,000 interactive science exhibits, Southeast Asia\'s largest 8K 3D digital dome theatre, and sub-zero indoor snow chamber.',
     admission: 'Ticketed',
     suggestedDuration: '3 to 4 hours',
-    imageUrl: IMAGES.jewel,
+    imageUrl: IMAGES.scienceCentre,
     practicalTips: [
       'Ideal for travelling families with young children whose airways are more sensitive to haze.',
       'Connected indoor food courts and kids water-play / indoor curiosity zones.',
